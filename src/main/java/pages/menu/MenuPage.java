@@ -2,8 +2,11 @@ package pages.menu;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.PlaywrightException;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import pages.BasePage;
+import utils.Constants;
+import utils.Keys;
 
 import java.util.List;
 
@@ -45,31 +48,31 @@ public class MenuPage extends BasePage {
         List<Locator> buttons = addToCartButtons.all();
         if (!buttons.isEmpty()) {
             buttons.getFirst().click();
-        } else throw new IllegalStateException("Unable to add to cart");
+        } else throw new IllegalStateException(Constants.ExceptionMessage.UNABLE_ADD_TO_CART_ERROR);
 
         return this;
     }
 
     public MenuPage changeMinPrice(Integer newValue) {
         if (newValue < 0) {
-            throw new IllegalStateException("Negative price error");
+            throw new IllegalStateException(Constants.ExceptionMessage.NEGATIVE_PRICE_ERROR);
         }
 
         if (newValue > parseIntPriceValue(minPriceValue.textContent())) {
             increasePriceValueToValue(minPriceSlider, minPriceValue, newValue);
-        } else throw new IllegalStateException("Reduction min price error");
+        } else throw new IllegalStateException(Constants.ExceptionMessage.REDUCTION_MIN_PRICE_ERROR);
 
         return this;
     }
 
     public MenuPage changeMaxPrice(Integer newValue) {
         if (newValue < 0) {
-            throw new IllegalStateException("Negative price error");
+            throw new IllegalStateException(Constants.ExceptionMessage.NEGATIVE_PRICE_ERROR);
         }
 
         if (newValue < parseIntPriceValue(maxPriceValue.textContent())) {
             reducePriceValueToValue(maxPriceSlider, maxPriceValue, newValue);
-        } else throw new IllegalStateException("Increase max price error");
+        } else throw new IllegalStateException(Constants.ExceptionMessage.INCREASE_MAX_PRICE_ERROR);
 
         return this;
     }
@@ -102,17 +105,17 @@ public class MenuPage extends BasePage {
     private void moveRightSlider(Locator slider) {
         try {
             slider.dragTo(slider);
-        } catch (Exception e) {
-            throw new IllegalStateException("Slider out of bounds error");
+        } catch (PlaywrightException e) {
+            throw new IllegalStateException(Constants.ExceptionMessage.SLIDER_OUT_OF_BOUNDS_ERROR);
         }
     }
 
     private void moveLeftSlider(Locator slider) {
         try {
             slider.click();
-            page.keyboard().press("ArrowLeft");
-        } catch (Exception e) {
-            throw new IllegalStateException("Slider out of bounds error");
+            page.keyboard().press(Keys.ARROW_LEFT);
+        } catch (PlaywrightException e) {
+            throw new IllegalStateException(Constants.ExceptionMessage.SLIDER_OUT_OF_BOUNDS_ERROR);
         }
     }
 

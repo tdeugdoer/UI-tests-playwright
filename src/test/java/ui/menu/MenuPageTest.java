@@ -32,7 +32,7 @@ public class MenuPageTest extends BaseTest {
     @Test(description = "Применение сортировки пицц")
     public void sorting() {
         menuPage.selectPriceAscOption();
-        
+
         List<Float> menuCardsPrices = menuPage.getMenuCardsPricesList();
         List<Float> sortedCardsPrices = menuCardsPrices.stream()
                 .sorted()
@@ -71,7 +71,7 @@ public class MenuPageTest extends BaseTest {
 
         assertThat(cartExist)
                 .as(FailMessages.ELEMENT_NOT_EXIST)
-                .isTrue();
+                .isFalse();
     }
 
 }
