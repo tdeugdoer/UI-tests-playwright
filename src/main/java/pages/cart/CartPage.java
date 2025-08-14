@@ -2,9 +2,11 @@ package pages.cart;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
+import com.microsoft.playwright.PlaywrightException;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
 import pages.BasePage;
+import utils.Keys;
 
 import java.util.List;
 import java.util.Objects;
@@ -16,9 +18,9 @@ public class CartPage extends BasePage {
     private final Locator proceedToPaymentButton;
     private final Locator couponCodeInput;
     private final Locator applyCouponButton;
-    private final Locator removeButtons;
-    private final Locator quantityInputs;
-    private final Locator removeCouponButtons;
+    private final List<Locator> removeButtons;
+    private final List<Locator> quantityInputs;
+    private final List<Locator> removeCouponButtons;
 
     public CartPage(Page page) {
         super(page);
@@ -28,26 +30,35 @@ public class CartPage extends BasePage {
         proceedToPaymentButton = page.locator("//a[contains(@class,'checkout-button')]");
         couponCodeInput = page.locator("//input[@id='coupon_code']");
         applyCouponButton = page.locator("//button[@name='apply_coupon']");
-        removeButtons = page.locator("//a[@class='remove']");
-        quantityInputs = page.locator("//div[@class='quantity']//input");
-        removeCouponButtons = page.locator("//a[contains(@class,'remove-coupon')]");
+        removeButtons = page.locator("//a[@class='remove']").all();
+        quantityInputs = page.locator("//div[@class='quantity']//input").all();
+        removeCouponButtons = page.locator("//a[contains(@class,'remove-coupon')]").all();
+    }
+
+    public CartPage clickUpdateCartButton() {
+        updateCartButton.click();
+        return this;
+    }
+
+    public CartPage clickProceedToPaymentButton() {
+        proceedToPaymentButton.click();
+        return this;
+    }
+
+    public CartPage clickApplyCouponButton() {
+        applyCouponButton.click();
+        return this;
     }
 
     public Integer getFirstProductQuantity() {
-        List<Locator> inputs = quantityInputs.all();
-        if (!inputs.isEmpty()) {
-            return Integer.valueOf(Objects.requireNonNull(inputs.getFirst().getAttribute("value")));
+        if (!quantityInputs.isEmpty()) {
+            return Integer.valueOf(Objects.requireNonNull(quantityInputs.getFirst().inputValue()));
         }
         return 0;
     }
 
-    public CartPage enterFirstProductQuantity(Integer quantity) {
-        List<Locator> inputs = quantityInputs.all();
-        if (!inputs.isEmpty()) {
-            Locator firstQuantityInput = inputs.getFirst();
-            firstQuantityInput.clear();
-            firstQuantityInput.fill(String.valueOf(quantity));
-        }
+    public CartPage enterFirstProductQuantity(int quantity) {
+        quantityInputs.getFirst().fill(String.valueOf(quantity));
         return this;
     }
 
@@ -57,17 +68,14 @@ public class CartPage extends BasePage {
 
     public CartPage enterCouponCode(String couponCode) {
         couponCodeInput.fill(couponCode);
-        couponCodeInput.press("Enter");
+        couponCodeInput.press(Keys.ENTER);
         return this;
     }
 
     public CartPage tryRemoveCoupons() {
         try {
-            List<Locator> buttons = removeCouponButtons.all();
-            for (Locator button : buttons) {
-                button.click();
-            }
-        } catch (Exception ignored) {
+            removeCouponButtons.forEach(Locator::clear);
+        } catch (PlaywrightException e) {
         }
         return this;
     }
@@ -89,12 +97,11 @@ public class CartPage extends BasePage {
     }
 
     public CartPage clearCart() {
-        List<Locator> buttons = removeButtons.all();
-        for (Locator button : buttons) {
+        removeButtons.forEach(button -> {
             if (button.isVisible()) {
                 button.click();
             }
-        }
+        });
         return this;
     }
 

@@ -2,23 +2,20 @@ package pages.main;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import lombok.Getter;
 import org.awaitility.Awaitility;
-import org.awaitility.core.ConditionTimeoutException;
 import pages.BasePage;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
-@Getter
 public class MainPage extends BasePage {
     private final Locator pizzaSliderUl;
     private final Locator prevPizzaSlick;
     private final Locator nextPizzaSlick;
     private final Locator pizzaSliderLi;
     private final Locator drinkImages;
-    private final Locator dessertPageLinks;
+    private final List<Locator> dessertPageLinks;
 
     public MainPage(Page page) {
         super(page);
@@ -27,12 +24,12 @@ public class MainPage extends BasePage {
         nextPizzaSlick = page.locator("//h2[@class='prod-title' and contains(text(), 'Пицца')]/ancestor::aside/ul[@class='new-prod-slide remove-overload slick-initialized slick-slider']//a[@class='slick-next']");
         pizzaSliderLi = page.locator("//h2[@class='prod-title' and contains(text(), 'Пицца')]/ancestor::aside/ul[@class='new-prod-slide remove-overload slick-initialized slick-slider']//div[@class='slick-track']/li");
         drinkImages = page.locator("//h2[@class='prod-title' and contains(text(), 'Напитки')]/ancestor::aside//img[@class='attachment-shop_catalog size-shop_catalog wp-post-image']");
-        dessertPageLinks = page.locator("//h2[@class='prod-title' and contains(text(), 'Десерты')]/ancestor::aside//img[@class='attachment-shop_catalog size-shop_catalog wp-post-image']/parent::a");
+        dessertPageLinks = page.locator("//h2[@class='prod-title' and contains(text(), 'Десерты')]/ancestor::aside//img[@class='attachment-shop_catalog size-shop_catalog wp-post-image']/parent::a").all();
     }
 
     public MainPage slideLeftPizzaSlider(Integer times) {
         IntStream.range(0, times).forEach(i -> {
-            List<String> initialItems = getVisiblePizzaInSliderAria();
+            List<Locator> initialItems = getVisiblePizzaInSlider();
             prevPizzaSlick.hover();
             prevPizzaSlick.click();
             waitingChangedVisibleItems(initialItems);
@@ -42,7 +39,7 @@ public class MainPage extends BasePage {
 
     public MainPage slideRightPizzaSlider(Integer times) {
         IntStream.range(0, times).forEach(i -> {
-            List<String> initialItems = getVisiblePizzaInSliderAria();
+            List<Locator> initialItems = getVisiblePizzaInSlider();
             nextPizzaSlick.hover();
             nextPizzaSlick.click();
             waitingChangedVisibleItems(initialItems);
@@ -53,7 +50,7 @@ public class MainPage extends BasePage {
     public MainPage slidePizzaSlider(Integer times, String key) {
         pizzaSliderUl.click();
         IntStream.range(0, times).forEach(i -> {
-            List<String> initialItems = getVisiblePizzaInSliderAria();
+            List<Locator> initialItems = getVisiblePizzaInSlider();
             page.keyboard().press(key);
             waitingChangedVisibleItems(initialItems);
         });
@@ -63,13 +60,6 @@ public class MainPage extends BasePage {
     public List<Locator> getVisiblePizzaInSlider() {
         return pizzaSliderLi.all().stream()
                 .filter(el -> Objects.equals(el.getAttribute("aria-hidden"), "false"))
-                .toList();
-    }
-
-    private List<String> getVisiblePizzaInSliderAria() {
-        return pizzaSliderLi.all().stream()
-                .filter(el -> Objects.equals(el.getAttribute("aria-hidden"), "false"))
-                .map(el -> el.getAttribute("outerHTML"))
                 .toList();
     }
 
@@ -92,16 +82,9 @@ public class MainPage extends BasePage {
         dessertPageLinks.first().click();
     }
 
-    private void waitingChangedVisibleItems(List<String> initialItems) {
-        try {
-            Awaitility.await("Ждём изменения отображаемых элементов в слайдере")
-                    .until(() -> {
-                        List<String> currentItems = getVisiblePizzaInSliderAria();
-                        return !currentItems.equals(initialItems);
-                    });
-        } catch (ConditionTimeoutException e) {
-            // Игнорируем timeout, если элементы не изменились
-        }
+    private void waitingChangedVisibleItems(List<Locator> initialItems) {
+        Awaitility.await("Waiting for the displayed elements to change in the slider")
+                .until(() -> !getVisiblePizzaInSlider().equals(initialItems));
     }
 
 }

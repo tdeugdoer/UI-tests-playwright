@@ -2,9 +2,8 @@ package pages.checkout;
 
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
-import lombok.Getter;
+import formData.CheckoutFormData;
 
-@Getter
 public class CheckoutDataFillingPage extends CheckoutBasePage {
     private final Locator firstNameInput;
     private final Locator lastNameInput;
@@ -33,6 +32,18 @@ public class CheckoutDataFillingPage extends CheckoutBasePage {
         paymentInCashOnDeliveryRadioButton = page.locator("//input[@id='payment_method_cod']");
         termsCheckbox = page.locator("//input[@id='terms']");
         placeOrderButton = page.locator("//button[@id='place_order']");
+    }
+
+    public CheckoutDataFillingPage fillOutOrderDetails(CheckoutFormData formData) {
+        firstNameInput.fill(formData.getFirstName());
+        lastNameInput.fill(formData.getLastName());
+        countrySelect.selectOption(formData.getCountry());
+        addressInput.fill(formData.getAddress());
+        cityInput.fill(formData.getCity());
+        stateInput.fill(formData.getState());
+        postcodeInput.fill(formData.getPostcode());
+        phoneInput.fill(formData.getPhone());
+        return this;
     }
 
     public CheckoutDataFillingPage enterOrderDate(String orderDate) {

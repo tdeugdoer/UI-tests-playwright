@@ -30,17 +30,17 @@ public abstract class BaseTest {
     protected BrowserContext context;
     protected Page page;
 
-    @BeforeSuite
+    @BeforeSuite(alwaysRun = true)
     public void launchPlaywright() {
         playwright = Playwright.create();
     }
 
-    @BeforeClass
+    @BeforeClass(alwaysRun = true)
     public void launchBrowser() {
         browser = BrowserFactory.createBrowser(playwright);
     }
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void createContextAndPage() {
         context = browser.newContext(new Browser.NewContextOptions()
                 .setViewportSize(TestConfig.BROWSER_WIDTH, TestConfig.BROWSER_HEIGHT));

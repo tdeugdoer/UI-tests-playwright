@@ -11,8 +11,6 @@ import utils.Keys;
 import java.util.List;
 
 public class MenuPage extends BasePage {
-    private final Locator menuCardsPrices;
-    private final Locator addToCartButtons;
     private final Locator minPriceSlider;
     private final Locator maxPriceSlider;
     private final Locator minPriceValue;
@@ -20,11 +18,12 @@ public class MenuPage extends BasePage {
     private final Locator priceFilteringButton;
     private final Locator orderSelect;
     private final Locator title;
+    private final List<Locator> menuCardsPrices;
+    private final List<Locator> addToCartButtons;
+
 
     public MenuPage(Page page) {
         super(page);
-        menuCardsPrices = page.locator("//div[@class='price-cart']/descendant::bdi");
-        addToCartButtons = page.locator("//a[@class='button product_type_simple add_to_cart_button ajax_add_to_cart']");
         minPriceSlider = page.locator("//span[contains(@class, 'ui-slider-handle ui-state-default ui-corner-all')][1]");
         maxPriceSlider = page.locator("//span[contains(@class, 'ui-slider-handle ui-state-default ui-corner-all')][2]");
         minPriceValue = page.locator("//span[@class='from']");
@@ -32,6 +31,8 @@ public class MenuPage extends BasePage {
         priceFilteringButton = page.locator("//div[@class='price_slider_amount']/button[@type='submit']");
         orderSelect = page.locator("//select[@name='orderby']");
         title = page.locator("//h1[@class='entry-title ak-container']");
+        menuCardsPrices = page.locator("//div[@class='price-cart']/descendant::bdi").all();
+        addToCartButtons = page.locator("//a[@class='button product_type_simple add_to_cart_button ajax_add_to_cart']").all();
     }
 
     public MenuPage clickPriceFilteringButton() {
@@ -45,9 +46,8 @@ public class MenuPage extends BasePage {
     }
 
     public MenuPage addToCartFirstProduct() {
-        List<Locator> buttons = addToCartButtons.all();
-        if (!buttons.isEmpty()) {
-            buttons.getFirst().click();
+        if (!addToCartButtons.isEmpty()) {
+            addToCartButtons.getFirst().click();
         } else throw new IllegalStateException(Constants.ExceptionMessage.UNABLE_ADD_TO_CART_ERROR);
 
         return this;
@@ -78,9 +78,9 @@ public class MenuPage extends BasePage {
     }
 
     public List<Float> getMenuCardsPricesList() {
-        menuCardsPrices.first().waitFor(new Locator.WaitForOptions()
+        menuCardsPrices.getFirst().waitFor(new Locator.WaitForOptions()
                 .setState(WaitForSelectorState.VISIBLE));
-        return menuCardsPrices.all().stream()
+        return menuCardsPrices.stream()
                 .map(Locator::textContent)
                 .map(this::parseFloatPriceValue)
                 .toList();

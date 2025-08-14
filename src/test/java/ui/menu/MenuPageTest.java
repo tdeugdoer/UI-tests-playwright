@@ -20,16 +20,16 @@ public class MenuPageTest extends BaseTest {
     private CartPage cartPage;
     private HeaderComponent header;
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void setUp() {
-        page.navigate(TestConstants.Urls.BASE_URL + TestConstants.Urls.MENU_URL);
-
         menuPage = new MenuPage(page);
         cartPage = new CartPage(page);
         header = new HeaderComponent(page);
+
+        page.navigate(TestConstants.Urls.BASE_URL + TestConstants.Urls.MENU_URL);
     }
 
-    @Test(description = "Применение сортировки пицц")
+    @Test(description = "Pizza sorting")
     public void sorting() {
         menuPage.selectPriceAscOption();
 
@@ -43,7 +43,7 @@ public class MenuPageTest extends BaseTest {
                 .isEqualTo(sortedCardsPrices);
     }
 
-    @Test(description = "Фильтрация пицц по цене")
+    @Test(description = "Pizza filtering by price")
     public void priceFiltering() {
         Integer expectedMinPrice = 300;
         Integer expectedMaxPrice = 480;
@@ -63,7 +63,7 @@ public class MenuPageTest extends BaseTest {
         });
     }
 
-    @Test(description = "Добавление пиццы в корзину")
+    @Test(description = "Adding pizza to the cart")
     public void additionToCart() {
         menuPage.addToCartFirstProduct();
         header.clickLinkToCart();
