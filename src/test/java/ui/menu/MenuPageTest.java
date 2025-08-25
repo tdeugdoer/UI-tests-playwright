@@ -71,7 +71,7 @@ public class MenuPageTest extends BaseTest {
 
         assertThat(cartExist)
                 .as(FailMessages.ELEMENT_NOT_EXIST)
-                .isFalse();
+                .isTrue();
     }
 
 }

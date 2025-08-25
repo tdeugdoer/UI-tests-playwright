@@ -58,7 +58,7 @@ public class CartPageTest extends BaseTest {
         });
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void tearDown() {
         step("Clear cart", () -> {
             page.navigate(TestConstants.Urls.BASE_URL + TestConstants.Urls.CART_URL);
@@ -110,7 +110,7 @@ public class CartPageTest extends BaseTest {
 
             assertThat(message)
                     .as(FailMessages.STRING_NOT_MATCH_EXPECTED)
-                    .isEqualToIgnoringCase("ORDER CHECKOUT");
+                    .isEqualToIgnoringCase("Оформление заказа");
         });
     }
 

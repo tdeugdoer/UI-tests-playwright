@@ -8,7 +8,6 @@ import org.awaitility.core.ConditionTimeoutException;
 import pages.BasePage;
 import utils.Keys;
 
-import java.util.List;
 import java.util.Objects;
 
 public class CartPage extends BasePage {
@@ -18,9 +17,9 @@ public class CartPage extends BasePage {
     private final Locator proceedToPaymentButton;
     private final Locator couponCodeInput;
     private final Locator applyCouponButton;
-    private final List<Locator> removeButtons;
-    private final List<Locator> quantityInputs;
-    private final List<Locator> removeCouponButtons;
+    private final Locator removeButtons;
+    private final Locator quantityInputs;
+    private final Locator removeCouponButtons;
 
     public CartPage(Page page) {
         super(page);
@@ -30,9 +29,9 @@ public class CartPage extends BasePage {
         proceedToPaymentButton = page.locator("//a[contains(@class,'checkout-button')]");
         couponCodeInput = page.locator("//input[@id='coupon_code']");
         applyCouponButton = page.locator("//button[@name='apply_coupon']");
-        removeButtons = page.locator("//a[@class='remove']").all();
-        quantityInputs = page.locator("//div[@class='quantity']//input").all();
-        removeCouponButtons = page.locator("//a[contains(@class,'remove-coupon')]").all();
+        removeButtons = page.locator("//a[@class='remove']");
+        quantityInputs = page.locator("//div[@class='quantity']//input");
+        removeCouponButtons = page.locator("//a[contains(@class,'remove-coupon')]");
     }
 
     public CartPage clickUpdateCartButton() {
@@ -51,14 +50,14 @@ public class CartPage extends BasePage {
     }
 
     public Integer getFirstProductQuantity() {
-        if (!quantityInputs.isEmpty()) {
-            return Integer.valueOf(Objects.requireNonNull(quantityInputs.getFirst().inputValue()));
+        if (quantityInputs.count() > 0) {
+            return Integer.valueOf(Objects.requireNonNull(quantityInputs.first().inputValue()));
         }
         return 0;
     }
 
     public CartPage enterFirstProductQuantity(int quantity) {
-        quantityInputs.getFirst().fill(String.valueOf(quantity));
+        quantityInputs.first().fill(String.valueOf(quantity));
         return this;
     }
 
@@ -74,7 +73,7 @@ public class CartPage extends BasePage {
 
     public CartPage tryRemoveCoupons() {
         try {
-            removeCouponButtons.forEach(Locator::clear);
+            removeCouponButtons.all().forEach(Locator::clear);
         } catch (PlaywrightException e) {
         }
         return this;
@@ -97,7 +96,7 @@ public class CartPage extends BasePage {
     }
 
     public CartPage clearCart() {
-        removeButtons.forEach(button -> {
+        removeButtons.all().forEach(button -> {
             if (button.isVisible()) {
                 button.click();
             }

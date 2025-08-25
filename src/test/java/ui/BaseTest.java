@@ -12,7 +12,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.BeforeSuite;
 import utils.BrowserFactory;
 import utils.TestConfig;
 
@@ -20,20 +19,16 @@ import java.io.ByteArrayInputStream;
 import java.time.Duration;
 
 public abstract class BaseTest {
+    protected static final Playwright playwright = Playwright.create();
+
     static {
         Awaitility.setDefaultPollInterval(Duration.ofMillis(TestConfig.POLL_INTERVAL_MS));
         Awaitility.setDefaultPollDelay(Duration.ofMillis(TestConfig.POLL_DELAY_MS));
     }
 
-    protected Playwright playwright;
     protected Browser browser;
     protected BrowserContext context;
     protected Page page;
-
-    @BeforeSuite(alwaysRun = true)
-    public void launchPlaywright() {
-        playwright = Playwright.create();
-    }
 
     @BeforeClass(alwaysRun = true)
     public void launchBrowser() {

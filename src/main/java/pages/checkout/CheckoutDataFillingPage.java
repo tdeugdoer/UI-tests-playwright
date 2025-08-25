@@ -34,6 +34,16 @@ public class CheckoutDataFillingPage extends CheckoutBasePage {
         placeOrderButton = page.locator("//button[@id='place_order']");
     }
 
+    public CheckoutDataFillingPage clickTermsCheckbox() {
+        termsCheckbox.click();
+        return this;
+    }
+
+    public CheckoutDataFillingPage clickPlaceOrderButton() {
+        placeOrderButton.click();
+        return this;
+    }
+
     public CheckoutDataFillingPage fillOutOrderDetails(CheckoutFormData formData) {
         firstNameInput.fill(formData.getFirstName());
         lastNameInput.fill(formData.getLastName());
@@ -46,7 +56,7 @@ public class CheckoutDataFillingPage extends CheckoutBasePage {
         return this;
     }
 
-    public CheckoutDataFillingPage enterOrderDate(String orderDate) {
+    public CheckoutDataFillingPage fillOrderDate(String orderDate) {
         orderDateInput.fill(orderDate);
         return this;
     }

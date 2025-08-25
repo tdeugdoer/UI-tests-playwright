@@ -15,7 +15,7 @@ public class MainPage extends BasePage {
     private final Locator nextPizzaSlick;
     private final Locator pizzaSliderLi;
     private final Locator drinkImages;
-    private final List<Locator> dessertPageLinks;
+    private final Locator dessertPageLinks;
 
     public MainPage(Page page) {
         super(page);
@@ -24,7 +24,7 @@ public class MainPage extends BasePage {
         nextPizzaSlick = page.locator("//h2[@class='prod-title' and contains(text(), 'Пицца')]/ancestor::aside/ul[@class='new-prod-slide remove-overload slick-initialized slick-slider']//a[@class='slick-next']");
         pizzaSliderLi = page.locator("//h2[@class='prod-title' and contains(text(), 'Пицца')]/ancestor::aside/ul[@class='new-prod-slide remove-overload slick-initialized slick-slider']//div[@class='slick-track']/li");
         drinkImages = page.locator("//h2[@class='prod-title' and contains(text(), 'Напитки')]/ancestor::aside//img[@class='attachment-shop_catalog size-shop_catalog wp-post-image']");
-        dessertPageLinks = page.locator("//h2[@class='prod-title' and contains(text(), 'Десерты')]/ancestor::aside//img[@class='attachment-shop_catalog size-shop_catalog wp-post-image']/parent::a").all();
+        dessertPageLinks = page.locator("//h2[@class='prod-title' and contains(text(), 'Десерты')]/ancestor::aside//img[@class='attachment-shop_catalog size-shop_catalog wp-post-image']/parent::a");
     }
 
     public MainPage slideLeftPizzaSlider(Integer times) {

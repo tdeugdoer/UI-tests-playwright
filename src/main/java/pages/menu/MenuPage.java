@@ -18,8 +18,8 @@ public class MenuPage extends BasePage {
     private final Locator priceFilteringButton;
     private final Locator orderSelect;
     private final Locator title;
-    private final List<Locator> menuCardsPrices;
-    private final List<Locator> addToCartButtons;
+    private final Locator menuCardsPrices;
+    private final Locator addToCartButtons;
 
 
     public MenuPage(Page page) {
@@ -31,8 +31,8 @@ public class MenuPage extends BasePage {
         priceFilteringButton = page.locator("//div[@class='price_slider_amount']/button[@type='submit']");
         orderSelect = page.locator("//select[@name='orderby']");
         title = page.locator("//h1[@class='entry-title ak-container']");
-        menuCardsPrices = page.locator("//div[@class='price-cart']/descendant::bdi").all();
-        addToCartButtons = page.locator("//a[@class='button product_type_simple add_to_cart_button ajax_add_to_cart']").all();
+        menuCardsPrices = page.locator("//div[@class='price-cart']/descendant::bdi");
+        addToCartButtons = page.locator("//a[@class='button product_type_simple add_to_cart_button ajax_add_to_cart']");
     }
 
     public MenuPage clickPriceFilteringButton() {
@@ -46,10 +46,10 @@ public class MenuPage extends BasePage {
     }
 
     public MenuPage addToCartFirstProduct() {
-        if (!addToCartButtons.isEmpty()) {
-            addToCartButtons.getFirst().click();
-        } else throw new IllegalStateException(Constants.ExceptionMessage.UNABLE_ADD_TO_CART_ERROR);
-
+        Locator firstAddToCartButton = addToCartButtons.first();
+        firstAddToCartButton.waitFor(new Locator.WaitForOptions()
+                .setState(WaitForSelectorState.ATTACHED));
+        firstAddToCartButton.click();
         return this;
     }
 
@@ -78,9 +78,9 @@ public class MenuPage extends BasePage {
     }
 
     public List<Float> getMenuCardsPricesList() {
-        menuCardsPrices.getFirst().waitFor(new Locator.WaitForOptions()
+        menuCardsPrices.first().waitFor(new Locator.WaitForOptions()
                 .setState(WaitForSelectorState.VISIBLE));
-        return menuCardsPrices.stream()
+        return menuCardsPrices.all().stream()
                 .map(Locator::textContent)
                 .map(this::parseFloatPriceValue)
                 .toList();
